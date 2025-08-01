@@ -1,0 +1,39 @@
+{% extends 'website/base.html' %}
+
+{% block title %}Home - Broadcast App{% endblock %}
+
+{% block content %}
+<h2>📰 Latest Posts</h2>
+
+{% if posts %}
+    {% for post in posts %}
+    <div class="post">
+        <h3>{{ post.title }}</h3>
+        <div class="user-info">
+            By <a href="{% url 'user_profile' post.author.id %}">{{ post.author.username }}</a>
+        </div>
+        <div class="timestamp">
+            Published: {{ post.scheduled_for|date:"F j, Y, g:i a" }}
+        </div>
+        <p>{{ post.content }}</p>
+        {% if post.image %}
+            <img src="{{ post.image.url }}" alt="Post image">
+        {% endif %}
+    </div>
+    {% endfor %}
+{% else %}
+    <p>No posts yet. Be the first to create one!</p>
+{% endif %}
+
+{% if user.is_authenticated %}
+    <div style="margin-top: 20px;">
+        <a href="{% url 'create_post' %}" class="btn btn-primary">Create New Post</a>
+    </div>
+{% else %}
+    <div style="margin-top: 20px;">
+        <p>Login to create posts and subscribe to other users!</p>
+        <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+        <a href="{% url 'register' %}" class="btn btn-success">Register</a>
+    </div>
+{% endif %}
+{% endblock %} 

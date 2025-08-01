@@ -1,0 +1,47 @@
+{% extends 'website/base.html' %}
+
+{% block title %}{{ profile_user.username }}'s Profile - Broadcast App{% endblock %}
+
+{% block content %}
+<h2>👤 {{ profile_user.username }}'s Profile</h2>
+
+<div style="margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 4px;">
+    <h4>📊 Stats:</h4>
+    <p>Posts: {{ posts.count }}</p>
+    <p>Subscribers: {{ profile_user.subscribers.count }}</p>
+    <p>Following: {{ profile_user.subscriptions.count }}</p>
+</div>
+
+{% if user.is_authenticated and user != profile_user %}
+    <div style="margin-bottom: 20px;">
+        {% if is_subscribed %}
+            <a href="{% url 'unsubscribe' profile_user.id %}" class="btn btn-danger">Unfollow</a>
+        {% else %}
+            <a href="{% url 'subscribe' profile_user.id %}" class="btn btn-success">Follow</a>
+        {% endif %}
+    </div>
+{% endif %}
+
+<h3>📰 Posts by {{ profile_user.username }}</h3>
+
+{% if posts %}
+    {% for post in posts %}
+    <div class="post">
+        <h4>{{ post.title }}</h4>
+        <div class="timestamp">
+            Published: {{ post.scheduled_for|date:"F j, Y, g:i a" }}
+        </div>
+        <p>{{ post.content }}</p>
+        {% if post.image %}
+            <img src="{{ post.image.url }}" alt="Post image">
+        {% endif %}
+    </div>
+    {% endfor %}
+{% else %}
+    <p>{{ profile_user.username }} hasn't published any posts yet.</p>
+{% endif %}
+
+<div style="margin-top: 20px;">
+    <a href="{% url 'home' %}" class="btn btn-primary">Back to Home</a>
+</div>
+{% endblock %} 

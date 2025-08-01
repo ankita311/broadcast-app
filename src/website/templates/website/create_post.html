@@ -1,0 +1,29 @@
+{% extends 'website/base.html' %}
+
+{% block title %}Create Post - Broadcast App{% endblock %}
+
+{% block content %}
+<h2>📝 Create Scheduled Post</h2>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+        {{ field }}
+        {% if field.help_text %}
+            <small style="color: #666;">{{ field.help_text }}</small>
+        {% endif %}
+        {% if field.errors %}
+            {% for error in field.errors %}
+                <div style="color: red; font-size: 0.9em;">{{ error }}</div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Schedule Post</button>
+    <a href="{% url 'my_posts' %}" class="btn btn-success">View My Posts</a>
+</form>
+
+
+{% endblock %} 

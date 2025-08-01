@@ -1,0 +1,39 @@
+{% extends 'website/base.html' %}
+
+{% block title %}My Posts - Broadcast App{% endblock %}
+
+{% block content %}
+<h2>📝 My Posts</h2>
+
+{% if posts %}
+    {% for post in posts %}
+    <div class="post">
+        <h3>{{ post.title }}</h3>
+        <div class="timestamp">
+            Created: {{ post.created_at|date:"F j, Y, g:i a" }}
+        </div>
+        <div class="timestamp">
+            Scheduled for: {{ post.scheduled_for|date:"F j, Y, g:i a" }}
+        </div>
+        <div style="margin: 10px 0;">
+            {% if post.is_published %}
+                <span style="background-color: #28a745; color: white; padding: 5px 10px; border-radius: 4px;">✅ Published</span>
+            {% else %}
+                <span style="background-color: #ffc107; color: black; padding: 5px 10px; border-radius: 4px;">⏰ Scheduled</span>
+            {% endif %}
+        </div>
+        <p>{{ post.content }}</p>
+        {% if post.image %}
+            <img src="{{ post.image.url }}" alt="Post image">
+        {% endif %}
+    </div>
+    {% endfor %}
+{% else %}
+    <p>You haven't created any posts yet.</p>
+{% endif %}
+
+<div style="margin-top: 20px;">
+    <a href="{% url 'create_post' %}" class="btn btn-primary">Create New Post</a>
+    <a href="{% url 'home' %}" class="btn btn-success">Back to Home</a>
+</div>
+{% endblock %} 

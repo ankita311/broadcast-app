@@ -1,0 +1,33 @@
+{% extends 'website/base.html' %}
+
+{% block title %}Notifications - Broadcast App{% endblock %}
+
+{% block content %}
+<h2>🔔 Notifications</h2>
+
+{% if notifications %}
+    {% for notification in notifications %}
+    <div class="post" style="{% if not notification.is_read %}border-left: 4px solid #007bff;{% endif %}">
+        <div class="timestamp">
+            {{ notification.created_at|date:"F j, Y, g:i a" }}
+            {% if not notification.is_read %}
+                <span style="background-color: #007bff; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.8em;">New</span>
+            {% endif %}
+        </div>
+        <p>{{ notification.message }}</p>
+        <div style="margin-top: 10px;">
+            <a href="{% url 'user_profile' notification.post.author.id %}" class="btn btn-primary">View Post</a>
+            {% if not notification.is_read %}
+                <a href="{% url 'mark_notification_read' notification.id %}" class="btn btn-success">Mark as Read</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <p>No notifications yet. Follow other users to get notified when they post!</p>
+{% endif %}
+
+<div style="margin-top: 20px;">
+    <a href="{% url 'home' %}" class="btn btn-primary">Back to Home</a>
+</div>
+{% endblock %} 
