@@ -8,3 +8,7 @@ wheels/
 
 # Virtual environments
 .venv
+
+#Django
+db.sqlite3
+/static/
