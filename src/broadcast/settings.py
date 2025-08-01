@@ -105,7 +105,6 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 # Change this to your timezone
 TIME_ZONE = 'Asia/Kolkata'  # For India
 # TIME_ZONE = 'America/New_York'  # For US East Coast
