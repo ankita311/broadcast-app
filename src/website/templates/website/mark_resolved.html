@@ -1,0 +1,44 @@
+{% extends 'website/base.html' %}
+
+{% block title %}Mark Grievance Resolved - My Neighbourhood{% endblock %}
+
+{% block content %}
+<h2>Mark Grievance as Resolved</h2>
+
+<div class="post">
+    <div class="category-badge category-{{ post.category }}">
+        {{ post.get_category_display }}
+    </div>
+    <h3>{{ post.title }}</h3>
+    <div class="user-info">
+        By <a href="{% url 'user_profile' post.author.id %}">{{ post.author.get_full_name }}</a> 
+        ({{ post.author.profile.get_role_display }})
+    </div>
+    <div class="timestamp">
+        Published: {{ post.scheduled_for|date:"F j, Y, g:i a" }}
+    </div>
+    <p>{{ post.content }}</p>
+    {% if post.image %}
+        <img src="{{ post.image.url }}" alt="Post image">
+    {% endif %}
+</div>
+
+<div style="margin-top: 2rem; padding: 1.5rem; background-color: #d4edda; border-radius: 8px; border-left: 4px solid #28a745;">
+    <h4>Mark as Resolved</h4>
+    <p><strong>Are you sure you want to mark this grievance as resolved?</strong></p>
+    <p style="color: #666; margin-bottom: 1rem;">
+        This will add a resolution note to the post indicating that the issue has been addressed by the RWA.
+    </p>
+    
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success">Yes, Mark as Resolved</button>
+        <a href="{% url 'rwa_dashboard' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+<div style="margin-top: 2rem;">
+    <a href="{% url 'rwa_dashboard' %}" class="btn btn-primary">Back to RWA Dashboard</a>
+    <a href="{% url 'home' %}" class="btn btn-secondary">Back to Home</a>
+</div>
+{% endblock %} 

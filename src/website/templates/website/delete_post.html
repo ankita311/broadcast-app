@@ -1,0 +1,34 @@
+{% extends 'website/base.html' %}
+
+{% block title %}Delete Post - My Neighbourhood{% endblock %}
+
+{% block content %}
+<h2>Delete Post</h2>
+
+<div class="post">
+    <div class="category-badge category-{{ post.category }}">
+        {{ post.get_category_display }}
+    </div>
+    <h3>{{ post.title }}</h3>
+    <div class="timestamp">
+        Created: {{ post.created_at|date:"F j, Y, g:i a" }}
+    </div>
+    <div class="timestamp">
+        Scheduled for: {{ post.scheduled_for|date:"F j, Y, g:i a" }}
+    </div>
+    <p>{{ post.content }}</p>
+    {% if post.image %}
+        <img src="{{ post.image.url }}" alt="Post image">
+    {% endif %}
+</div>
+
+<div style="margin-top: 20px;">
+    <p><strong>Are you sure you want to delete this post?</strong></p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, Delete Post</button>
+        <a href="{% url 'my_posts' %}" class="btn btn-success">Cancel</a>
+    </form>
+</div>
+
+{% endblock %} 

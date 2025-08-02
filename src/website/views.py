@@ -36,13 +36,15 @@ def register(request):
             user.last_name = form.cleaned_data['last_name']
             user.save()
             profile = user.profile
+            profile.role = form.cleaned_data.get('role', 'resident')
             profile.house_number = form.cleaned_data.get('house_number', '')
             profile.building_number = form.cleaned_data.get('building_number', '')
             profile.society = form.cleaned_data.get('society', '')
             profile.save()
             
             login(request, user)
-            messages.success(request, 'Account created successfully!')
+            role_display = 'RWA Member' if profile.role == 'rwa_member' else 'Resident'
+            messages.success(request, f'Account created successfully! Welcome {role_display}!')
             return redirect('home')
     else:
         form = UserRegistrationForm()
@@ -189,3 +191,97 @@ def profile_edit(request):
         form = ProfileForm(instance=request.user.profile)
     
     return render(request, 'website/profile_edit.html', {'form': form})
+
+
+@login_required
+def update_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id, author=request.user)
+    
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Post updated successfully!')
+            return redirect('my_posts')
+    else:
+        form = PostForm(instance=post)
+    
+    return render(request, 'website/update_post.html', {'form': form, 'post': post})
+
+
+@login_required
+def delete_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id, author=request.user)
+    
+    if request.method == 'POST':
+        post.delete()
+        messages.success(request, 'Post deleted successfully!')
+        return redirect('my_posts')
+    
+    return render(request, 'website/delete_post.html', {'post': post})
+
+
+@login_required
+def community_management(request):
+    """RWA Member - Manage community posts and announcements"""
+    if not request.user.profile.is_rwa_member():
+        messages.error(request, 'Access denied. RWA Member access required.')
+        return redirect('home')
+    
+    # Get all grievances and complaints (same as RWA dashboard)
+    grievances = Post.objects.filter(
+        category__in=['grievance', 'complaint', 'maintenance', 'safety', 'emergency'],
+        is_published=True
+    ).order_by('-scheduled_for')
+    
+    # Get statistics
+    total_grievances = grievances.count()
+    unaddressed_grievances = grievances.filter(
+        category__in=['grievance', 'complaint', 'emergency']
+    ).count()
+    
+    context = {
+        'grievances': grievances,
+        'total_grievances': total_grievances,
+        'unaddressed_grievances': unaddressed_grievances,
+    }
+    
+    return render(request, 'website/community_management.html', context)
+
+
+@login_required
+def mark_grievance_resolved(request, post_id):
+    """RWA Member - Mark a grievance as resolved"""
+    if not request.user.profile.is_rwa_member():
+        messages.error(request, 'Access denied. RWA Member access required.')
+        return redirect('home')
+    
+    post = get_object_or_404(Post, id=post_id)
+    
+    if request.method == 'POST':
+        # Add a comment or update the post to mark as resolved
+        post.content += f"\n\n--- RESOLVED by {request.user.get_full_name()} on {timezone.now().strftime('%Y-%m-%d %H:%M')} ---"
+        post.save()
+        messages.success(request, 'Grievance marked as resolved!')
+        return redirect('rwa_dashboard')
+    
+    return render(request, 'website/mark_resolved.html', {'post': post})
+
+
+def public_rwa_dashboard(request):
+    """Public RWA Dashboard - Show all RWA members and their profiles"""
+    # Get all RWA members
+    rwa_members = User.objects.filter(profile__role='rwa_member').select_related('profile')
+    
+    # Get some community statistics
+    total_grievances = Post.objects.filter(
+        category__in=['grievance', 'complaint', 'maintenance', 'safety', 'emergency'],
+        is_published=True
+    ).count()
+    
+    context = {
+        'rwa_members': rwa_members,
+        'total_grievances': total_grievances,
+    }
+    
+    return render(request, 'website/public_rwa_dashboard.html', context)

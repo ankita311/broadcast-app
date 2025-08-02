@@ -10,19 +10,49 @@ def post_upload_path(instance, filename):
 
 
 class Profile(models.Model):
+    ROLE_CHOICES = [
+        ('resident', 'Resident'),
+        ('rwa_member', 'RWA Member'),
+    ]
+    
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='resident')
     house_number = models.CharField(max_length=50, blank=False, null=False)
     building_number = models.CharField(max_length=50, blank=False, null=False)
     society = models.CharField(max_length=200, blank=False, null=False)
     
     def __str__(self):
-        return f"Profile of {self.user.username}"
+        return f"Profile of {self.user.username} ({self.get_role_display()})"
+    
+    def is_rwa_member(self):
+        return self.role == 'rwa_member'
+    
+    def is_resident(self):
+        return self.role == 'resident'
 
 
 class Post(models.Model):
+    CATEGORY_CHOICES = [
+        ('celebration', 'Celebration'),
+        ('grievance', 'Grievance'),
+        ('information', 'Information'),
+        ('invitation', 'Invitation'),
+        ('safety', 'Safety & Security'),
+        ('maintenance', 'Maintenance'),
+        ('event', 'Event'),
+        ('announcement', 'Announcement'),
+        ('complaint', 'Complaint'),
+        ('suggestion', 'Suggestion'),
+        ('emergency', 'Emergency'),
+        ('lost_found', 'Lost & Found'),
+        ('other', 'Other'),
+    ]
+    
+    
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     content = models.TextField()
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='information')
     image = models.ImageField(upload_to=post_upload_path, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     scheduled_for = models.DateTimeField()

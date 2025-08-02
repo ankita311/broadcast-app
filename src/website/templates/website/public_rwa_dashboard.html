@@ -1,0 +1,98 @@
+{% extends 'website/base.html' %}
+
+{% block title %}RWA Members - My Neighbourhood{% endblock %}
+
+{% block content %}
+<h2>RWA Members</h2>
+
+<div style="margin-bottom: 2rem; padding: 1.5rem; background-color: #e8f5e8; border-radius: 8px; border-left: 4px solid #4caf50;">
+    <h4>Community Overview</h4>
+    <div style="display: flex; gap: 2rem; margin-top: 1rem;">
+        <div style="text-align: center;">
+            <div style="font-size: 2rem; font-weight: bold; color: #2e7d32;">{{ rwa_members.count }}</div>
+            <div style="color: #666;">RWA Members</div>
+        </div>
+        <div style="text-align: center;">
+            <div style="font-size: 2rem; font-weight: bold; color: #f57c00;">{{ total_grievances }}</div>
+            <div style="color: #666;">Total Issues</div>
+        </div>
+    </div>
+</div>
+
+<h3>RWA Member Profiles</h3>
+
+{% if rwa_members %}
+    {% for member in rwa_members %}
+    <div class="post">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+            <div>
+                <h3>{{ member.get_full_name }}</h3>
+                <div style="color: #6c757d; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                    <strong>Username:</strong> {{ member.username }}
+                </div>
+                <div style="color: #6c757d; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                    <strong>Email:</strong> {{ member.email }}
+                </div>
+                <div style="color: #6c757d; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                    <strong>Member Since:</strong> {{ member.date_joined|date:"F j, Y" }}
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <span style="background-color: #4caf50; color: white; padding: 0.5rem 1rem; border-radius: 4px; font-weight: 500; font-size: 0.8rem;">
+                    RWA Member
+                </span>
+            </div>
+        </div>
+        
+        {% if member.profile.house_number or member.profile.building_number or member.profile.society %}
+            <div style="background-color: #f8f9fa; padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
+                <h5 style="margin-bottom: 0.5rem;">Address Information:</h5>
+                {% if member.profile.house_number %}
+                    <div style="color: #666; font-size: 0.9rem;"><strong>House:</strong> {{ member.profile.house_number }}</div>
+                {% endif %}
+                {% if member.profile.building_number %}
+                    <div style="color: #666; font-size: 0.9rem;"><strong>Building:</strong> {{ member.profile.building_number }}</div>
+                {% endif %}
+                {% if member.profile.society %}
+                    <div style="color: #666; font-size: 0.9rem;"><strong>Society:</strong> {{ member.profile.society }}</div>
+                {% endif %}
+            </div>
+        {% endif %}
+        
+        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+            <a href="{% url 'user_profile' member.id %}" class="btn btn-primary btn-sm">View Full Profile</a>
+            {% if user.is_authenticated and user != member %}
+                {% if user.profile.is_rwa_member %}
+                    <a href="{% url 'user_profile' member.id %}" class="btn btn-success btn-sm">Contact</a>
+                {% else %}
+                    <a href="{% url 'user_profile' member.id %}" class="btn btn-success btn-sm">Follow</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div style="text-align: center; padding: 2rem; background-color: #f8f9fa; border-radius: 8px;">
+        <p style="font-size: 1.2rem; color: #666;">No RWA members registered yet.</p>
+        <p style="color: #999;">RWA members will appear here once they register with the RWA Member role.</p>
+    </div>
+{% endif %}
+
+
+<div style="margin-top: 2rem;">
+    <h3>Quick Actions</h3>
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        {% if user.is_authenticated %}
+            <a href="{% url 'create_post' %}" class="btn btn-primary">Report Issue</a>
+        {% endif %}
+        <a href="{% url 'home' %}" class="btn btn-secondary">Back to Home</a>
+    </div>
+</div>
+
+<style>
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.875rem;
+}
+</style>
+{% endblock %} 

@@ -1,0 +1,79 @@
+{% extends 'website/base.html' %}
+
+{% block title %}Community Management - My Neighbourhood{% endblock %}
+
+{% block content %}
+<h2>Community Management</h2>
+
+<div style="margin-bottom: 2rem; padding: 1.5rem; background-color: #e3f2fd; border-radius: 8px; border-left: 4px solid #2196f3;">
+    <h4>Community Statistics</h4>
+    <div style="display: flex; gap: 2rem; margin-top: 1rem;">
+        <div style="text-align: center;">
+            <div style="font-size: 2rem; font-weight: bold; color: #1976d2;">{{ total_grievances }}</div>
+            <div style="color: #666;">Total Issues</div>
+        </div>
+        <div style="text-align: center;">
+            <div style="font-size: 2rem; font-weight: bold; color: #f57c00;">{{ unaddressed_grievances }}</div>
+            <div style="color: #666;">Unaddressed</div>
+        </div>
+    </div>
+</div>
+
+<h3>Community Grievances & Issues</h3>
+
+{% if grievances %}
+    {% for post in grievances %}
+    <div class="post">
+        <div class="category-badge category-{{ post.category }}">
+            {{ post.get_category_display }}
+        </div>
+        <div class="post-header">
+            <h3>{{ post.title }}</h3>
+            <div class="post-actions">
+                {% if user.profile.is_rwa_member %}
+                    <a href="{% url 'mark_grievance_resolved' post.id %}" class="btn btn-success btn-sm">Mark Resolved</a>
+                {% endif %}
+                <a href="{% url 'user_profile' post.author.id %}" class="btn btn-primary btn-sm">View Author</a>
+            </div>
+        </div>
+        <div class="user-info">
+            By <a href="{% url 'user_profile' post.author.id %}">{{ post.author.get_full_name }}</a> 
+            ({{ post.author.profile.get_role_display }})
+        </div>
+        <div class="timestamp">
+            Published: {{ post.scheduled_for|date:"F j, Y, g:i a" }}
+        </div>
+        <p>{{ post.content }}</p>
+        {% if post.image %}
+            <img src="{{ post.image.url }}" alt="Post image">
+        {% endif %}
+    </div>
+    {% endfor %}
+{% else %}
+    <div style="text-align: center; padding: 2rem; background-color: #f8f9fa; border-radius: 8px;">
+        <p style="font-size: 1.2rem; color: #666;">No grievances or issues reported yet.</p>
+        <p style="color: #999;">Residents will appear here when they post grievances, complaints, or maintenance issues.</p>
+    </div>
+{% endif %}
+
+<div style="margin-top: 2rem;">
+    <h3>Quick Actions</h3>
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="{% url 'create_post' %}" class="btn btn-primary">Create Announcement</a>
+        <a href="{% url 'home' %}" class="btn btn-secondary">Back to Home</a>
+    </div>
+</div>
+
+<style>
+.post-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: 1rem;
+}
+
+.post-actions .btn-sm {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+}
+</style>
+{% endblock %} 

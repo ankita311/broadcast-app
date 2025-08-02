@@ -13,6 +13,15 @@ class UserRegistrationForm(UserCreationForm):
         'class': 'form-control',
         'placeholder': 'Enter last name'
     }))
+    role = forms.ChoiceField(
+        choices=Profile.ROLE_CHOICES,
+        required=True,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+            'placeholder': 'Select your role'
+        }),
+        help_text='Choose your role in the community'
+    )
     house_number = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={
         'class': 'form-control',
         'placeholder': 'Enter house number'
@@ -28,7 +37,7 @@ class UserRegistrationForm(UserCreationForm):
     
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2', 'house_number', 'building_number', 'society']
+        fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2', 'role', 'house_number', 'building_number', 'society']
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
@@ -43,10 +52,11 @@ class PostForm(forms.ModelForm):
     
     class Meta:
         model = Post
-        fields = ['title', 'content', 'image', 'scheduled_for']
+        fields = ['title', 'content', 'category', 'image', 'scheduled_for']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
+            'category': forms.Select(attrs={'class': 'form-control'}),
             'scheduled_for': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         } 
 
@@ -54,8 +64,9 @@ class PostForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['house_number', 'building_number', 'society']
+        fields = ['role', 'house_number', 'building_number', 'society']
         widgets = {
+            'role': forms.Select(attrs={'class': 'form-control'}),
             'house_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter house number'}),
             'building_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter building number'}),
             'society': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter society name'}),

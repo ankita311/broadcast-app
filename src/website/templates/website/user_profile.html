@@ -1,6 +1,6 @@
 {% extends 'website/base.html' %}
 
-{% block title %}{{ profile_user.username }}'s Profile - Broadcast App{% endblock %}
+{% block title %}{{ profile_user.username }}'s Profile - My Neighbourhood{% endblock %}
 
 {% block content %}
 <h2>{{ profile_user.username }}'s Profile</h2>
@@ -9,6 +9,7 @@
     <h4>User Information:</h4>
     <p><strong>Username:</strong> {{ profile_user.username }}</p>
     <p><strong>Name:</strong> {{ profile_user.first_name }} {{ profile_user.last_name }}</p>
+    <p><strong>Role:</strong> <span style="background-color: #e3f2fd; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 500;">{{ profile_user.profile.get_role_display }}</span></p>
     <p><strong>Email:</strong> {{ profile_user.email }}</p>
     <p><strong>Date Joined:</strong> {{ profile_user.date_joined|date:"F j, Y" }}</p>
     
@@ -23,6 +24,7 @@
         {% if profile_user.profile.society %}
             <p><strong>Society:</strong> {{ profile_user.profile.society }}</p>
         {% endif %}
+        
     {% endif %}
     
     {% if user == profile_user %}

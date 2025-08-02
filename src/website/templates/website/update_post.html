@@ -1,9 +1,9 @@
 {% extends 'website/base.html' %}
 
-{% block title %}Create Post - My Neighbourhood{% endblock %}
+{% block title %}Update Post - My Neighbourhood{% endblock %}
 
 {% block content %}
-<h2>Create Scheduled Post</h2>
+<h2>Update Post</h2>
 
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
@@ -21,9 +21,8 @@
         {% endif %}
     </div>
     {% endfor %}
-    <button type="submit" class="btn btn-primary">Schedule Post</button>
-    <a href="{% url 'my_posts' %}" class="btn btn-success">View My Posts</a>
+    <button type="submit" class="btn btn-primary">Update Post</button>
+    <a href="{% url 'my_posts' %}" class="btn btn-success">Back to My Posts</a>
 </form>
-
 
 {% endblock %} 
