@@ -17,7 +17,6 @@ def publish_scheduled_posts_task():
         post.is_published = True
         post.save()
         
-        # Create notifications for subscribers
         subscribers = Subscription.objects.filter(author=post.author)
         for subscription in subscribers:
             Notification.objects.create(
@@ -33,7 +32,7 @@ def publish_scheduled_posts_task():
 
 @shared_task
 def cleanup_old_notifications():
-    """Clean up old notifications (optional)"""
+    """Clean up old notifications"""
     from datetime import timedelta
     cutoff_date = timezone.now() - timedelta(days=30)
     deleted_count = Notification.objects.filter(

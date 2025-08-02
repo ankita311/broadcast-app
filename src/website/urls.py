@@ -9,6 +9,7 @@ urlpatterns = [
     path('create-post/', views.create_post, name='create_post'),
     path('my-posts/', views.my_posts, name='my_posts'),
     path('profile/<int:user_id>/', views.user_profile, name='user_profile'),
+    path('profile/edit/', views.profile_edit, name='profile_edit'),
     path('subscribe/<int:user_id>/', views.subscribe, name='subscribe'),
     path('unsubscribe/<int:user_id>/', views.unsubscribe, name='unsubscribe'),
     path('notifications/', views.notifications, name='notifications'),

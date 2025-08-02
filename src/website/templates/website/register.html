@@ -3,7 +3,7 @@
 {% block title %}Register - Broadcast App{% endblock %}
 
 {% block content %}
-<h2>📝 Register</h2>
+<h2>Register</h2>
 
 <form method="post">
     {% csrf_token %}
@@ -24,7 +24,4 @@
     <button type="submit" class="btn btn-primary">Register</button>
 </form>
 
-<p style="margin-top: 20px;">
-    Already have an account? <a href="{% url 'login' %}">Login here</a>
-</p>
 {% endblock %} 

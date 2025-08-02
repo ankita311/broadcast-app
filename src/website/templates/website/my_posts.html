@@ -3,7 +3,7 @@
 {% block title %}My Posts - Broadcast App{% endblock %}
 
 {% block content %}
-<h2>📝 My Posts</h2>
+<h2>My Posts</h2>
 
 {% if posts %}
     {% for post in posts %}
@@ -17,9 +17,9 @@
         </div>
         <div style="margin: 10px 0;">
             {% if post.is_published %}
-                <span style="background-color: #28a745; color: white; padding: 5px 10px; border-radius: 4px;">✅ Published</span>
+                <span style="background-color: #28a745; color: white; padding: 5px 10px; border-radius: 4px;">Published</span>
             {% else %}
-                <span style="background-color: #ffc107; color: black; padding: 5px 10px; border-radius: 4px;">⏰ Scheduled</span>
+                <span style="background-color: #ffc107; color: black; padding: 5px 10px; border-radius: 4px;">Scheduled</span>
             {% endif %}
         </div>
         <p>{{ post.content }}</p>

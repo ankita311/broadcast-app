@@ -1,15 +1,25 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 def post_upload_path(instance, filename):
-    """Simple file upload path for posts"""
     return f'posts/{instance.author.username}/{filename}'
 
 
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    house_number = models.CharField(max_length=50, blank=False, null=False)
+    building_number = models.CharField(max_length=50, blank=False, null=False)
+    society = models.CharField(max_length=200, blank=False, null=False)
+    
+    def __str__(self):
+        return f"Profile of {self.user.username}"
+
+
 class Post(models.Model):
-    """Simple post model with scheduled publishing"""
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     content = models.TextField()
@@ -23,7 +33,6 @@ class Post(models.Model):
 
 
 class Subscription(models.Model):
-    """Simple subscription model"""
     subscriber = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subscriptions')
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subscribers')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -36,7 +45,6 @@ class Subscription(models.Model):
 
 
 class Notification(models.Model):
-    """Simple notification model"""
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     message = models.CharField(max_length=500)
@@ -45,3 +53,14 @@ class Notification(models.Model):
     
     def __str__(self):
         return f"Notification for {self.user.username}: {self.message[:50]}"
+
+
+# Signal to automatically create Profile when User is created
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()

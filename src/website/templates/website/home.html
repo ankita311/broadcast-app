@@ -1,14 +1,30 @@
 {% extends 'website/base.html' %}
+{% load website_extras %}
 
-{% block title %}Home - Broadcast App{% endblock %}
+{% block title %}Home - My Neighbourhood{% endblock %}
 
 {% block content %}
-<h2>📰 Latest Posts</h2>
-
+<h2>Latest Posts</h2>
+<br>
 {% if posts %}
     {% for post in posts %}
     <div class="post">
-        <h3>{{ post.title }}</h3>
+        <div class="post-header">
+            <h3>{{ post.title }}</h3>
+            {% if user.is_authenticated and user != post.author %}
+                <div class="subscription-actions">
+                    {% if subscription_status|get_item:post.author.id %}
+                        <a href="{% url 'unsubscribe' post.author.id %}" class="btn btn-danger btn-sm">
+                            Unsubscribe
+                        </a>
+                    {% else %}
+                        <a href="{% url 'subscribe' post.author.id %}" class="btn btn-success btn-sm">
+                            Subscribe
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
         <div class="user-info">
             By <a href="{% url 'user_profile' post.author.id %}">{{ post.author.username }}</a>
         </div>
